@@ -557,11 +557,15 @@ enum OnboardingBuildCapabilities {
 
 /// Onboarding may hide a source while keeping its runtime implementation and
 /// persisted compatibility values available to the rest of the app.
+///
+/// 私有包构建按维护者决定继续隐藏 Chromecast；公开兼容驱动构建（本地实验）显示它，
+/// 让用户能在小米与 Chromecast 之间选择。
 enum OnboardingControlSourceVisibilityPolicy {
     static func visibleSources(
-        _ sources: [OnboardingControlSource]
+        _ sources: [OnboardingControlSource],
+        showsChromecast: Bool = ChromecastFeatureIntegration.usesPublicDriver
     ) -> [OnboardingControlSource] {
-        sources.filter { $0 != .chromecastRemote }
+        showsChromecast ? sources : sources.filter { $0 != .chromecastRemote }
     }
 }
 

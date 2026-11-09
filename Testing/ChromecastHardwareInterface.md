@@ -420,6 +420,24 @@ CODE_SIGN_IDENTITY="Developer ID Application: lei qian (L3QHLDRPAY)" \
 构建完成后用 `strings dist/SayAll.app/Contents/MacOS/RemoteMic | grep -c <并行开发的新类型名>`
 确认产物里**没有**混入那些改动（应为 `0`）。用完 `git worktree remove /private/tmp/chromecast-<shortsha>`。
 
+## 公开兼容驱动（无私有包构建，本地实验分支 `feat/public-chromecast-remote`）
+
+- 状态：**候选，未经真机验收**。只在本地实验分支，未提 PR。
+- 范围：未编入私有包 `SayAllChromecast` 时，`ChromecastPublicRemoteDriver` 用 CoreBluetooth（ATVV v1.0）与 IOKit HID（Google VID `0x18D1`，按键取 IOKit 按报告描述符解析后的 Consumer element 值；macOS 上原始报文是数组下标，不得直接按 usage 解析）提供同一组回调；按键页与连接页用 SwiftUI 矢量插画 `ChromecastRemoteIllustration`，不含厂商照片或商标图形。协议参考开源项目 vibe-mote（MIT）与本手册前文的 macOS 真机记录。
+- 构建：`CONFIGURATION=debug REQUIRE_SIRI_REMOTE_SIGNING=0 ./scripts/build-app.sh`，产物 `dist/SayAll.app`（ad-hoc 签名，首次运行需重新授予蓝牙、输入监控、辅助功能）。`SAYALL_PUBLIC_CHROMECAST=0` 可恢复「公开构建隐藏 Chromecast」。
+- 自动化：`ChromecastPublicDriverTests` 覆盖 14 键 usage 表、按真机日志回放的 element 值按下/松开、重复值去重、表外 usage 与数组容器忽略、取消复位、v1.0 能力应答、hold/toggle 手势、0.6 秒连按防抖、远端结束持续流、宿主结束时只关闭宿主流、画布布局。
+
+### 真机步骤（公开驱动）
+
+1. 系统蓝牙已配对 Chromecast 语音遥控器，启动 `dist/SayAll.app`，在 Onboarding「选择控制来源」选 Chromecast，或在连接页等待设备卡出现。
+   预期日志：`CHROMECAST PUBLIC BLE source=system_connected` → `ATVV caps=sent version=1.0` → `caps_response version=0x100 codec=2 interaction=0x3` → `ATVV phase=ready`。
+2. 按键：打开「自定义按键」，逐个按 14 个键。预期每键一条 `CHROMECAST ACTION … button=` 且与物理键一致（Onboarding 遥控器页为 `ONBOARDING REMOTE_INPUT observed=control`）；出现 `HID control phase=ignored reason=unmapped_usage` 说明有表外按键；`HID native_input=neutralized`。若为 `not_verified`，映射动作会被宿主拒绝（`native_input_not_verified`），记录 `HID phase=device_matched product=0x…`。
+3. 按一次说话（默认）：短按语音键并在松键后说话，再按一次结束。预期 `gesture=press action=start` → `gesture=release action=latch` → `ATVV written bytes=0c00` → `stream origin=host_requested` → 文字上屏 → `action=stop` → `written bytes=0d00`，`completion=normal`。超过 10 秒应出现 `written bytes=0e00`（续流）。
+4. 按住说话：按键页底部切到「按住说话」，按住期间说话、松开结束；首尾字可能因远端人声门控丢失，需记录。
+5. 快速连按、断开蓝牙、关闭 App 中途结束：预期分别为 `action=debounced`、`completion=forced reason=cancelled.link_unavailable`、`reason=host_stop`，且下一次会话正常。
+
+失败判定：按语音键无 `ATVV control=0x4`（链路未通）；`latch` 后一直 `audio_packets=0` 且确实说了话；按键与物理键错位；关闭映射后按键仍被独占。
+
 ## 测试前准备
 
 1. 退出其他无线麦SayAll.app 实例，只保留待测包。

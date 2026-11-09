@@ -47,9 +47,15 @@ struct OnboardingFlowTests {
 
     @Test func onboardingSourceVisibilityHidesChromecastButKeepsOtherSources() {
         let visible = OnboardingControlSourceVisibilityPolicy.visibleSources(
-            OnboardingControlSource.allCases
+            OnboardingControlSource.allCases,
+            showsChromecast: false
         )
         #expect(!visible.contains(.chromecastRemote))
+        let publicVisible = OnboardingControlSourceVisibilityPolicy.visibleSources(
+            OnboardingControlSource.allCases,
+            showsChromecast: true
+        )
+        #expect(publicVisible.contains(.chromecastRemote))
         #expect(visible.contains(.xiaomiRemote))
         #expect(visible.contains(.appleCompanion))
         #expect(visible.contains(.webRemote))
@@ -145,6 +151,8 @@ struct OnboardingFlowTests {
     }
 
     @Test @MainActor func hiddenChromecastSelectionReturnsToTheSourcePage() throws {
+        // 公开兼容驱动构建会显示 Chromecast，此用例只约束私有包构建。
+        guard !ChromecastFeatureIntegration.usesPublicDriver else { return }
         let fixture = try OnboardingOffscreenFixture(
             step: .remoteAvailability,
             controlSource: .chromecastRemote
@@ -153,6 +161,17 @@ struct OnboardingFlowTests {
         #expect(fixture.settings.onboardingStep == .remoteAvailability)
         #expect(fixture.settings.onboardingControlSource == .unselected)
         #expect(fixture.probe.actions["control-source.chromecast_remote"] == nil)
+    }
+
+    @Test @MainActor func visibleChromecastSelectionIsKeptOnLaterSteps() throws {
+        guard ChromecastFeatureIntegration.usesPublicDriver else { return }
+        let fixture = try OnboardingOffscreenFixture(
+            step: .permissions,
+            controlSource: .chromecastRemote
+        )
+        defer { fixture.close() }
+        #expect(fixture.settings.onboardingStep == .permissions)
+        #expect(fixture.settings.onboardingControlSource == .chromecastRemote)
     }
 
     @Test @MainActor func missingSiriRemotePackageRemovesCardsAndRepairsSavedSelection() throws {
@@ -3673,7 +3692,10 @@ struct OnboardingFlowTests {
             invoke("control-source.more", on: remoteSource)
         }
         #expect(!remoteSource.settings.siriRemoteEnabled)
-        #expect(remoteSource.probe.actions["control-source.chromecast_remote"] == nil)
+        #expect(
+            (remoteSource.probe.actions["control-source.chromecast_remote"] != nil)
+                == ChromecastFeatureIntegration.usesPublicDriver
+        )
         let visibleSources = OnboardingControlSourceVisibilityPolicy.visibleSources(
             OnboardingBuildCapabilities.availableControlSources
         )

@@ -204,7 +204,8 @@ struct OnboardingView: View {
         )
     }
 
-    var body: some View {
+    // 修饰链过长会让编译器类型检查超时，这里拆成两段，行为不变。
+    private var observedContent: some View {
         VStack(spacing: 0) {
             phaseHeader
             GeometryReader { proxy in
@@ -355,6 +356,10 @@ struct OnboardingView: View {
                 )
             }
         }
+    }
+
+    var body: some View {
+        observedContent
         .onChange(of: settings.onboardingStep) { step in
             prepareForStep(step)
         }
@@ -811,7 +816,7 @@ struct OnboardingView: View {
 
     private var availablePhysicalControlSources: [OnboardingControlSource] {
         visibleControlSources.filter {
-            [.xiaomiRemote, .siriRemote].contains($0)
+            [.xiaomiRemote, .siriRemote, .chromecastRemote].contains($0)
         }
     }
 
@@ -926,6 +931,10 @@ struct OnboardingView: View {
                 .frame(width: emphasized ? 40 : 34, height: emphasized ? 40 : 34)
                 .background(Color.accentColor.opacity(0.10), in: RoundedRectangle(cornerRadius: 10))
             #endif
+        case .chromecastRemote:
+            ChromecastRemoteIllustration()
+                .frame(width: emphasized ? 24 : 17, height: emphasized ? 72 : 50)
+                .frame(width: emphasized ? 42 : 30)
         default:
             Image(systemName: controlSourceIcon(source))
                 .font(.system(size: emphasized ? 21 : 17, weight: .medium))
@@ -2675,7 +2684,7 @@ struct OnboardingView: View {
             remotePhotoPlaceholder
             #endif
         case .chromecastRemote:
-            #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
+            #if SAYALL_CHROMECAST_ENABLED
             ChromecastConnectionPhoto()
                 .scaleEffect(1.8)
                 .frame(width: 190, height: 360)
@@ -4173,7 +4182,8 @@ struct OnboardingView: View {
 
     private func prepareForStep(_ step: OnboardingStep) {
         refreshPermissionStates()
-        if settings.onboardingControlSource == .chromecastRemote {
+        if settings.onboardingControlSource == .chromecastRemote,
+           !visibleControlSources.contains(.chromecastRemote) {
             selectControlSource(.unselected)
             settings.setOnboardingStep(.remoteAvailability)
             return

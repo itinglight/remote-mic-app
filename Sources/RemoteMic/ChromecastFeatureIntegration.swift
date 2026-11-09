@@ -202,13 +202,15 @@ final class ChromecastFeatureIntegration {
         #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
         return [0x9450]
         #else
-        return []
+        return ChromecastPublicRemoteDriver.observedProductIDs
         #endif
     }
     var prepareNativeInput: (([UInt64]) -> Bool)? {
         didSet {
             #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
             feature.prepareNativeInput = prepareNativeInput
+            #else
+            publicDriver.prepareNativeInput = prepareNativeInput
             #endif
         }
     }
@@ -216,15 +218,26 @@ final class ChromecastFeatureIntegration {
         didSet {
             #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
             feature.restoreNativeInput = restoreNativeInput
+            #else
+            publicDriver.restoreNativeInput = restoreNativeInput
             #endif
         }
     }
-    /// 本次构建是否编入了私有包。
+    /// 本次构建是否提供 Chromecast 链路：私有包或公开兼容驱动（`ChromecastPublicRemoteDriver`）。
     static var isPackageIncluded: Bool {
-        #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
+        #if SAYALL_CHROMECAST_ENABLED
         return true
         #else
         return false
+        #endif
+    }
+
+    /// 本次构建是否使用公开兼容驱动（未编入私有包）。只用于日志与界面区分。
+    static var usesPublicDriver: Bool {
+        #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
+        return false
+        #else
+        return true
         #endif
     }
 
@@ -249,6 +262,8 @@ final class ChromecastFeatureIntegration {
 
     #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
     private let feature: SayAllChromecastFeature
+    #else
+    private let publicDriver = ChromecastPublicRemoteDriver()
     #endif
 
     init() {
@@ -281,18 +296,33 @@ final class ChromecastFeatureIntegration {
                 cancellationReason: event.cancellationReason?.logToken
             ))
         }
+        #else
+        publicDriver.onStatusChange = { [weak self] status in self?.onStatusChange?(status) }
+        publicDriver.onDeclaredCapabilitiesChange = { [weak self] declared in
+            self?.onDeclaredCapabilitiesChange?(declared)
+        }
+        publicDriver.onVoiceStart = { [weak self] in self?.onVoiceStart?() }
+        publicDriver.onVoiceStop = { [weak self] reason in self?.onVoiceStop?(reason) }
+        publicDriver.onSamples = { [weak self] samples, generation in self?.onSamples?(samples, generation) }
+        publicDriver.onControlEvent = { [weak self] event in self?.onControlEvent?(event) }
+        publicDriver.onHIDPresenceChange = { [weak self] present in self?.onHIDPresenceChange?(present) }
+        publicDriver.onLog = { [weak self] message in self?.onLog?(message) }
         #endif
     }
 
     func start() {
         #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
         feature.start()
+        #else
+        publicDriver.start()
         #endif
     }
 
     func stop() {
         #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
         feature.stop()
+        #else
+        publicDriver.stop()
         #endif
     }
 
@@ -300,12 +330,16 @@ final class ChromecastFeatureIntegration {
     func reconnect() {
         #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
         feature.reconnect()
+        #else
+        publicDriver.reconnect()
         #endif
     }
 
     func setVoiceMode(_ mode: ChromecastVoiceMode) {
         #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
         feature.setVoiceGestureMode(mode == .hold ? .hold : .toggle)
+        #else
+        publicDriver.setVoiceMode(mode)
         #endif
     }
 
@@ -315,6 +349,8 @@ final class ChromecastFeatureIntegration {
     func setControlMappingEnabled(_ enabled: Bool) {
         #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
         feature.setControlMappingEnabled(enabled)
+        #else
+        publicDriver.setControlMappingEnabled(enabled)
         #endif
     }
 
@@ -323,7 +359,7 @@ final class ChromecastFeatureIntegration {
         #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
         return feature.isHIDRemotePresent
         #else
-        return false
+        return publicDriver.isHIDRemotePresent
         #endif
     }
 
@@ -331,6 +367,8 @@ final class ChromecastFeatureIntegration {
     func notifyHostVoiceSessionEnded() {
         #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
         feature.notifyHostVoiceSessionEnded()
+        #else
+        publicDriver.notifyHostVoiceSessionEnded()
         #endif
     }
 

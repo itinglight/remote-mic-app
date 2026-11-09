@@ -1163,7 +1163,7 @@ struct SettingsView: View {
                 mappingPage
                 #endif
             } else if settings.selectedRemoteProfile?.model.isChromecastRemote == true {
-                #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
+                #if SAYALL_CHROMECAST_ENABLED
                 chromecastMappingPage
                 #else
                 mappingPage
@@ -1572,7 +1572,7 @@ struct SettingsView: View {
                 .frame(width: 82, height: 166)
             #endif
         } else if settings.selectedRemoteProfile?.model.isChromecastRemote == true {
-            #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
+            #if SAYALL_CHROMECAST_ENABLED
             ChromecastConnectionPhoto()
             #else
             UnrecognizedRemotePhoto()
@@ -1949,7 +1949,7 @@ struct SettingsView: View {
     }
     #endif
 
-    #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
+    #if SAYALL_CHROMECAST_ENABLED
     /// Chromecast 按键页。
     ///
     /// 与小米/苹果按键页共用同一个页面框架（页头、设备选择器、动作编辑器、页脚），
@@ -2044,7 +2044,7 @@ struct SettingsView: View {
     #endif
 
     private var buttonProfilesChromecastReservedControls: Set<String> {
-        #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
+        #if SAYALL_CHROMECAST_ENABLED
         ChromecastRemoteControl.canvasReservedControlIDs(
             allowSystemReservedKeys: settings.chromecastAllowSystemReservedKeys,
             exceptions: settings.chromecastSystemReservedExceptions)
@@ -2183,7 +2183,7 @@ struct SettingsView: View {
     }
     #endif
 
-    #if SAYALL_CHROMECAST_ENABLED && canImport(SayAllChromecast)
+    #if SAYALL_CHROMECAST_ENABLED
     private var profileScopeReservedChromecastControlIDs: Set<String> {
         guard editingMappingProfileID != nil else { return [] }
         return Set(ChromecastRemoteControl.allCases.map(\.rawValue).filter { controlID in
