@@ -70,33 +70,26 @@ struct LocalizationTests {
     }
 
     @Test func readmesUseVersionIndependentMacDownloadEntries() throws {
-        let stableURL = "https://download.sayall.app/mac"
-        let previewURL = "https://github.com/HD838A/remote-mic-app/releases"
+        // 社区 Fork：下载入口指向本仓库 Releases（相对链接），不写死具体版本或官方下载地址。
+        let releasesLink = "](../../releases)"
         let expectations = [
-            ("README.md", "## 下载与安装", "- 最新正式版（Apple Silicon）：", "- 最新预览版（Apple Silicon / Intel）："),
-            ("README.en.md", "## Download and install", "- Latest stable release (Apple Silicon):", "- Latest pre-release (Apple Silicon / Intel):"),
+            ("README.md", "## 下载"),
+            ("README.en.md", "## Download"),
         ]
 
-        for (readmeName, sectionHeading, stablePrefix, previewPrefix) in expectations {
+        for (readmeName, sectionHeading) in expectations {
             let readme = try String(
                 contentsOf: repositoryRoot.appendingPathComponent(readmeName),
                 encoding: .utf8
             )
-            let sectionStart = try #require(readme.range(of: sectionHeading))
+            let sectionStart = try #require(readme.range(of: "\n\(sectionHeading)\n"))
             let remainingReadme = readme[sectionStart.upperBound...]
             let sectionEnd = remainingReadme.range(of: "\n## ")?.lowerBound ?? readme.endIndex
             let downloadSection = readme[sectionStart.lowerBound..<sectionEnd]
-            let stableEntry = try #require(
-                downloadSection.split(separator: "\n").first { $0.hasPrefix(stablePrefix) }
-            )
-            let previewEntry = try #require(
-                downloadSection.split(separator: "\n").first { $0.hasPrefix(previewPrefix) }
-            )
 
-            #expect(stableEntry.contains("](\(stableURL))"))
-            #expect(!stableEntry.contains("/releases/"))
-            #expect(previewEntry.contains("](\(previewURL))"))
-            #expect(!previewEntry.contains("/releases/tag/"))
+            #expect(downloadSection.contains(releasesLink))
+            #expect(!downloadSection.contains("/releases/tag/"))
+            #expect(!downloadSection.contains("download.sayall.app"))
         }
     }
 
