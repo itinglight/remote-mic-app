@@ -89,6 +89,7 @@ The app is written to `dist/SayAll.app` (ad-hoc signed, for personal use only).
 | --- | --- | --- |
 | Google remote | Requires official private components | Open-source implementation (`Sources/RemoteMic/ChromecastPublicRemoteDriver.swift`) |
 | Xiaomi and Apple remotes | Supported | Not tested here; use the official release |
+| App name and icon | SayAll, official icon | Google Remote Voice, its own icon (some in-app text still says SayAll) |
 | Signing and notarization | Developer ID signed and notarized by Apple | Not notarized |
 | Download | [sayall.app](https://sayall.app/en/) | This repository's Releases |
 

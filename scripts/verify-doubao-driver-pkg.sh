@@ -372,10 +372,10 @@ case "$MODE" in
     test "$(/usr/bin/plutil -extract CFBundleVersion raw -o - \
       "$PAYLOAD_APP/Contents/Info.plist")" = "$BUILD"
     test "$(/usr/bin/plutil -extract CFBundleName raw -o - \
-      "$PAYLOAD_APP/Contents/Info.plist")" = "SayAll"
-    /usr/bin/grep -Fq '"CFBundleName" = "SayAll";' \
+      "$PAYLOAD_APP/Contents/Info.plist")" = "Google Remote Voice"
+    /usr/bin/grep -Fq '"CFBundleName" = "Google Remote Voice";' \
       "$PAYLOAD_APP/Contents/Resources/en.lproj/InfoPlist.strings"
-    /usr/bin/grep -Fq '"CFBundleName" = "无线麦 SayAll";' \
+    /usr/bin/grep -Fq '"CFBundleName" = "Google Remote Voice";' \
       "$PAYLOAD_APP/Contents/Resources/zh-Hans.lproj/InfoPlist.strings"
     ;;
   uninstall)

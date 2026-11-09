@@ -250,13 +250,13 @@ if (( ${#LOCALIZATION_DIRS} == 0 )); then
 fi
 test -d "$APP/Contents/Resources/en.lproj"
 test -f "$APP/Contents/Resources/en.lproj/Glossary.md"
-rg -q '^"CFBundleDisplayName" = "SayAll";$' \
+rg -q '^"CFBundleDisplayName" = "Google Remote Voice";$' \
   "$APP/Contents/Resources/en.lproj/InfoPlist.strings"
-rg -q '^"CFBundleName" = "SayAll";$' \
+rg -q '^"CFBundleName" = "Google Remote Voice";$' \
   "$APP/Contents/Resources/en.lproj/InfoPlist.strings"
-rg -q '^"CFBundleDisplayName" = "无线麦 SayAll";$' \
+rg -q '^"CFBundleDisplayName" = "Google Remote Voice";$' \
   "$APP/Contents/Resources/zh-Hans.lproj/InfoPlist.strings"
-rg -q '^"CFBundleName" = "无线麦 SayAll";$' \
+rg -q '^"CFBundleName" = "Google Remote Voice";$' \
   "$APP/Contents/Resources/zh-Hans.lproj/InfoPlist.strings"
 rg -q '^"app.name" = "SayAll";$' "$APP/Contents/Resources/en.lproj/Localizable.strings"
 # The localization rules live in one script so macOS CI can run the same check
@@ -270,8 +270,8 @@ test "$(plutil -extract LSMinimumSystemVersion raw -o - "$PLIST")" = \
   "$RELEASE_MIN_SYSTEM_VERSION"
 test "$(plutil -extract CFBundleDevelopmentRegion raw -o - "$PLIST")" = "en"
 test "${APP:t}" = "SayAll.app"
-test "$(plutil -extract CFBundleDisplayName raw -o - "$PLIST")" = "SayAll"
-test "$(plutil -extract CFBundleName raw -o - "$PLIST")" = "SayAll"
+test "$(plutil -extract CFBundleDisplayName raw -o - "$PLIST")" = "Google Remote Voice"
+test "$(plutil -extract CFBundleName raw -o - "$PLIST")" = "Google Remote Voice"
 test "$(plutil -extract CFBundleExecutable raw -o - "$PLIST")" = "RemoteMic"
 test "$(plutil -extract CFBundleIconFile raw -o - "$PLIST")" = "AppIcon"
 SAYALL_BUILD_CHANNEL="$(plutil -extract SayAllBuildChannel raw -o - "$PLIST" 2>/dev/null || true)"
