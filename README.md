@@ -89,6 +89,7 @@ CONFIGURATION=release SAYALL_PRIVATE_PLATFORM_MODE=public REQUIRE_SIRI_REMOTE_SI
 | --- | --- | --- |
 | Google 遥控器 | 依赖官方私有组件 | 公开源码实现（`Sources/RemoteMic/ChromecastPublicRemoteDriver.swift`） |
 | 小米、苹果遥控器 | 支持 | 未针对它们测试，请使用官方版本 |
+| App 名称与图标 | 无线麦 SayAll，官方图标 | Google Remote Voice，独立图标（App 内部分文字仍沿用 SayAll） |
 | 签名与公证 | Developer ID 签名并经 Apple 公证 | 未公证 |
 | 下载 | [sayall.app](https://sayall.app/) | 本仓库 Releases |
 

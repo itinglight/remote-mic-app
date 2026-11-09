@@ -1,5 +1,5 @@
-"CFBundleDisplayName" = "无线麦 SayAll";
-"CFBundleName" = "无线麦 SayAll";
+"CFBundleDisplayName" = "Google Remote Voice";
+"CFBundleName" = "Google Remote Voice";
 "NSBluetoothAlwaysUsageDescription" = "连接支持的遥控器和 Apple Watch，接收按键与麦克风声音。";
 "NSLocalNetworkUsageDescription" = "连接附近 iPhone、iPad 或 Apple Watch 上的无线麦 SayAll，接收按键与麦克风声音。";
 "NSMicrophoneUsageDescription" = "仅在你启用时，使用所选 Mac 麦克风进行语音输入。";
