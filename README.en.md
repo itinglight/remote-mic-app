@@ -27,8 +27,6 @@ Turn the **Chromecast with Google TV Voice Remote** (Bluetooth name "Chromecast 
 
 Download the latest `.dmg` from this repository's [Releases](../../releases) page.
 
-> No installer has been published yet. It will appear on the Releases page once available.
-
 The installer is a **community build that is not notarized by Apple**, so macOS blocks it the first time:
 
 1. Open the `.dmg` and drag the app into Applications.
