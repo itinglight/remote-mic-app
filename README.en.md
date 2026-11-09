@@ -74,7 +74,7 @@ git clone https://github.com/itinglight/remote-mic-app.git
 ```
 
 ```bash
-cd remote-mic-app && git switch feat/public-chromecast-remote
+cd remote-mic-app
 ```
 
 ```bash
