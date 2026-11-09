@@ -217,7 +217,11 @@ if buttonProfilesTestAccessEnabled && (buttonProfilesPackagePath ?? "").isEmpty 
 if buttonProfilesTestAccessEnabled && privateArtifactsAvailable {
     fatalError("free button profile test access excludes private membership artifacts")
 }
+// 缺私有包时由公开兼容驱动 `ChromecastPublicRemoteDriver` 提供 Chromecast 链路；
+// 设置 SAYALL_PUBLIC_CHROMECAST=0 可回到「公开构建隐藏 Chromecast」的旧行为。
+let publicChromecastDriverEnabled = ProcessInfo.processInfo.environment["SAYALL_PUBLIC_CHROMECAST"] != "0"
 let chromecastEnabled = privateChromecastEnabled || !(chromecastPackagePath ?? "").isEmpty
+    || publicChromecastDriverEnabled
 let macOSPlatform: SupportedPlatform = ProcessInfo.processInfo.environment["RELEASE_VARIANT"] == "intel"
     ? .macOS(.v13)
     : .macOS(.v14)

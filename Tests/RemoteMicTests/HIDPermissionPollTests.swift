@@ -240,7 +240,7 @@ struct HIDPermissionPollTests {
         let scheduler = HIDPermissionPollTestScheduler()
         let poll = HIDPermissionPoll(scheduler: scheduler, permissionEvaluator: { true }, logger: { _ in })
         var subscription: HIDPermissionPoll.Subscription? = poll.subscribe { _ in }
-        weak let weakSubscription = subscription
+        weak var weakSubscription = subscription
 
         subscription = nil
         #expect(weakSubscription == nil)

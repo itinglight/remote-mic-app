@@ -1,344 +1,106 @@
-# 无线麦 SayAll
+# Google 遥控器语音输入 for Mac
 
 [English](README.en.md)
 
-[官网](https://sayall.app/) · [配置教程](https://sayall.app/tutorial/) · [微博](https://weibo.com/getSayAll)
+把 **Chromecast with Google TV 语音遥控器**（蓝牙名「Chromecast Remote」）变成 Mac 的无线麦克风和遥控器：按住语音键说话，文字直接进入豆包输入法等语音工具；其余按键可以映射成方向键、回车、返回、音量等 Mac 操作。
 
-<p>
-  <a href="https://github.com/HD838A/remote-mic-app/stargazers">
-    <img src="https://img.shields.io/github/stars/HD838A/remote-mic-app?style=social" alt="GitHub Stars">
-  </a>
-</p>
+> **这是社区修改版，不是官方版本。** 本仓库 Fork 自开源项目 [无线麦 SayAll](https://github.com/HD838A/remote-mic-app)（`GPL-3.0-only`），在没有官方私有组件的公开构建里补上了 Google 遥控器支持。它与 SayAll 官方、Google 均无隶属、授权或背书关系；「Google」「Chromecast」「Google TV」是其各自所有者的商标，这里只用来说明兼容的硬件。
 
-<table>
-  <tr>
-    <td align="center">
-      <a href="Screenshots/douyin-sayall.jpg"><img src="Screenshots/douyin-sayall.jpg" alt="无线麦 SayAll App 抖音二维码" width="220"></a><br>
-      <strong>抖音 · GetSayAll</strong><br>
-      保存图片后，在抖音扫一扫
-    </td>
-    <td align="center">
-      <a href="Screenshots/xhs-sayall.jpg"><img src="Screenshots/xhs-sayall.jpg" alt="无线麦 SayAll App 小红书二维码" width="220"></a><br>
-      <strong>小红书</strong><br>
-      扫码关注无线麦 SayAll App
-    </td>
-  </tr>
-</table>
+## 能做什么
 
-## 视频介绍
+- **按住说话**：按住遥控器语音键说话，松开结束。识别后的文字由你的语音工具写进当前输入框。
+- **按一次说话**：也可以切换成按一下开始、再按一下结束。
+- **14 个普通按键**：方向键、确定、返回、主页、电源、音量加减、静音、信源、YouTube、Netflix，可以在「按键映射」里分别设置动作。
+- **首次使用向导**：一步步完成权限授予、遥控器连接、按键检查和语音测试。
+- 只用 macOS 公开的蓝牙和 HID 接口，不读取任何第三方 App 的私有数据。
 
-《可能是我最近用过最不像工具的工具》展示了无线麦 SayAll App 如何把蓝牙语音遥控器变成随手表达、控制 Mac 和与 AI 协作的新入口。
+## 支持的硬件与系统
 
-<p align="center">
-  <a href="https://www.bilibili.com/video/BV13Pep6BEXe">
-    <img src="Screenshots/video-introduction-cover.jpg" alt="《可能是我最近用过最不像工具的工具》视频封面" width="960">
-  </a>
-</p>
+| 项目 | 要求 |
+| --- | --- |
+| 遥控器 | Chromecast with Google TV 语音遥控器（系统蓝牙里显示为「Chromecast Remote」） |
+| Mac | Apple 芯片（M 系列），macOS 14 或更新版本 |
+| 语音工具 | 豆包输入法（已实测）；其他能用 Fn 键触发语音、并能选择麦克风的工具理论上可用 |
+| 虚拟麦克风 | `MiRemoteV 2ch` 音频设备（见下方「安装与首次设置」） |
 
-<p align="center"><a href="https://www.bilibili.com/video/BV13Pep6BEXe">点击封面或前往 Bilibili 观看原视频</a></p>
+## 下载
 
-视频作者：[可乐不甜的跑焦日记](https://space.bilibili.com/327214328)
+到本仓库的 [Releases](../../releases) 页面下载最新的 `.dmg`。
 
-> 同作者制作的小米蓝牙遥控器 2 Pro 3D 打印外壳：[在 MakerWorld 查看](https://makerworld.com.cn/zh/models/2965815-vibegrip-ma-shang-wo-wei-vibe-coding-zuo-de-xiao-m?appSharePlatform=sayall.app)
+> 目前还没有发布安装包，发布后会出现在 Releases 页面。
 
-## Windows 版本
+安装包是**社区自行构建的版本，没有经过 Apple 公证**，第一次打开时 macOS 会拦截：
 
-无线麦 SayAll App Windows 版本的第一个预览版已经发布，当前以基本功能为主：
+1. 打开 `.dmg`，把 App 拖进「应用程序」文件夹。
+2. 在「应用程序」里**右键点 App → 打开**，在弹出的对话框里再点一次「打开」。
+3. 如果仍被拦截：打开「系统设置 → 隐私与安全性」，在页面底部点「仍要打开」。
 
-- 支持小米蓝牙遥控器 2 和 2 Pro；
-- 语音输入目前仅支持微信输入法；
-- 语音输入快捷键为 `Ctrl + Win`。
+如果你更放心自己编译，可以直接从本仓库源码构建（见下方「从源码构建」）。
 
-欢迎下载体验。无线麦 SayAll App Windows 版本理论上不会被游戏反作弊或杀毒软件警告；如有顾虑，建议先使用 AI 扫描源码，再安装试用。
+## 安装与首次设置
 
-[下载 Windows 预览版](https://github.com/GetSayAll/remote-mic-app-windows/releases/)
+1. **配对遥控器**：打开「系统设置 → 蓝牙」，同时按住遥控器的「返回」和「主页」键，直到指示灯闪烁，然后连接「Chromecast Remote」。
+2. **安装虚拟麦克风 `MiRemoteV 2ch`**：遥控器的声音要通过这个虚拟音频设备送给语音工具。社区版安装包暂不包含它；如果你的 Mac 上还没有，需要从源码构建安装（`scripts/build-doubao-driver.sh`）。
+3. **授予权限**：首次打开 App 时，按向导授予「蓝牙」「输入监控」「辅助功能」三项权限，然后完全退出并重新打开 App。
+4. **跟着向导走**：选择 Chromecast 遥控器 → 按一下确定键或方向键确认连接 → 选择语音工具 → 说一句话测试。
 
-iOS 正式版：[无线麦 SayAll](https://apps.apple.com/app/%E6%97%A0%E7%BA%BF%E9%BA%A6/id6797208067)
+## 配合豆包输入法
 
-Mac App 继续采用官网下载方式分发，Mac App Store 上架暂时暂停；当前 App Store 上架重点只包含 iOS App 与其内嵌的 Apple Watch App。
+在豆包输入法的设置里：
 
-![无线麦 SayAll App——为 Vibe Coding 而生的语音遥控器](Screenshots/Remote-Mic-Introduce-1.png)
+- 语音快捷键使用 **Fn**；
+- **按住说话**：App 里选「按住说话」，豆包使用「长按模式」；
+- **按一次说话**：App 里选「按一次说话」，豆包使用「免按模式」；
+- 开启「全局唤起语音」；
+- 麦克风选择 **MiRemoteV 2ch**。
 
-**无线麦 SayAll App，不只听你说。还能替你做，帮你记。**
+如果按住语音键时豆包的录音浮窗没有出现，几乎都是豆包的快捷键或模式没设对，先检查上面几项。
 
-**开口就输入，一键做更多，说过有回眸。**
+## 已知限制
 
-无线麦 SayAll App 是一款 macOS 应用，可以把兼容的蓝牙语音遥控器变成 Mac 的无线麦克风。它先让语音输入随手可得，再把常用操作、不同 App 的键位方案和你主动保存的表达连接起来。
+- 安装包没有经过 Apple 公证，首次打开需要手动允许。
+- 左、右、YouTube、Netflix 键的映射，以及长按连发、断开蓝牙后的按键复位，还没有在真机上逐项验证。
+- 只支持 Apple 芯片的 Mac；Intel Mac 未测试。
+- 社区版没有官方的崩溃诊断上报，也没有官方的自动更新。
 
-无线麦 SayAll App 使用 SwiftUI 原生开发，常驻运行时 CPU 占用率低于 0.5%，内存占用约 50 MB，比一个 Chrome 标签页还要轻量。
+遇到问题欢迎在本仓库提 [Issue](../../issues)。附上 App「文件 → 打开日志所在文件夹」里的日志，会更容易排查。
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="Screenshots/connection-and-voice-dark-zh.png">
-  <img alt="连接与语音设置页" src="Screenshots/connection-and-voice-zh.png">
-</picture>
+## 从源码构建
 
-## 无线麦 SayAll App，不只听你说
+需要安装 Xcode。
 
-### 开口就输入
-
-按住说，松开停。开会不发言、听歌不暂停，也能把文字送进正在使用的 App。无线麦 SayAll 不会为了语音输入自动修改 Mac 的默认输入或输出设备。
-
-### 一键做更多（新增能力，真实环境验证中）
-
-组合动作可以把多个受支持的本机步骤依次执行，再绑定到遥控器的单击、双击或长按。它面向稳定、重复的工作流，不等于任意脚本、无限自动化或远程执行。
-
-### 切得准（候选能力，真实环境验证中）
-
-同一只遥控器可以保存多套完整键位方案。你可以手动切换，也可以主动开启按 App 自动匹配；没有匹配规则时回到默认方案。当前仍在进行真实遥控器和第三方 App 的完整验证。
-
-### 说过有回眸（候选能力，等待完整真实语音验收）
-
-主动开启“记录回眸”后，无线麦 SayAll 只保存通过 SayAll 输入并最终稳定出现的文字，按 App 和日期整理在当前 Mac。开启“本地 Agent 访问”后，可以为每个 AI 客户端创建独立、可撤销的只读 MCP 授权。
-
-- 回眸和本地 Agent 访问默认关闭；
-- 不保存音频，不读取完整聊天、其他人的回复或输入框前后文；
-- 不提供云同步或跨设备同步；
-- MCP 通过本机 `stdio` 工作，不监听 HTTP/TCP；
-- 无线麦 SayAll 不会主动上传回眸记录，但第三方 AI 客户端可能把读取结果发送给其云端模型。
-
-## 使用要求
-
-常用语和苹果遥控器 Siri Remote 均为会员功能。使用 Siri Remote 时，需先通过安装包安装对应组件，再以有效会员权益在 App 中启用。仅安装组件不会自动启用。
-
-- Apple Silicon Mac（macOS 14 或更高版本），或 Intel Mac（macOS 13 或更高版本）；
-- 小米蓝牙遥控器 2 或 2 Pro；
-- 使用语音输入时，需要安装随安装包提供的兼容麦克风，或在 Mac 上已有 BlackHole 2ch 等回环音频设备。
-
-## AI 一键安装（Agent 提示词）
-
-不熟悉 Mac 设置也可以：把下面这段提示词整段复制给豆包、DeepSeek 等 AI 助手，它会先确认 Mac 和遥控器是否符合要求，再一步一步带你下载安装、配对遥控器、设置语音输入，最后验证能不能出字。
-
-- 能操作电脑的 AI 可以直接完成检查、下载和安装中能自动完成的部分；只能聊天的 AI 会告诉你每一步点哪里。
-- 需要你本人确认的步骤（系统权限弹窗、安装器、蓝牙配对）它会停下来等你。
-- 安装包只从官网固定入口或官方 GitHub Releases 下载；打不开时用下方「下载与安装」里的百度网盘备用入口。任何让你关闭系统安全设置或杀毒软件的说法都不要照做。
-
-<details>
-<summary><strong>点开复制「SayAll 一键安装」提示词</strong></summary>
-
-```text
-你是我的 Mac 安装向导。请用简单的中文，少用术语；必须用时先用一句话解释。一步一步帮我在当前这台 Mac 上安装并配置「无线麦 SayAll」，直到我用遥控器说话能真正打出字。
-
-开始前先说明你的能力：如果你只能聊天，不要假装执行命令，只告诉我点哪里、输入什么，然后等我回复结果；如果你能操作这台电脑，可以先做检查、下载和安装，但每次动手前先说明要做什么，得到我同意再做。
-
-产品事实：
-- 支持 Apple Silicon Mac（macOS 14 或更高）和 Intel Mac（macOS 13 或更高）。先帮我确认芯片和系统版本。
-- 遥控器只支持小米蓝牙遥控器 2 和小米蓝牙遥控器 2 Pro。
-- Apple Silicon 从官网固定入口下载最新正式版（https://download.sayall.app/mac）；Intel 电脑或想安装预览版，从官方 GitHub Releases（https://github.com/HD838A/remote-mic-app/releases）下载，选标记为 Pre-release 的最新候选。
-- 安装包按芯片区分，文件名形如 SayAll-版本-编译号-AppleSilicon-install.pkg 或 …-Intel-install.pkg，两者不能混用；文件名带 uninstall 的是卸载包，不要下载。
-- 两个地址都打不开时停下来告诉我，我会按项目 README（https://github.com/HD838A/remote-mic-app）里的百度网盘备用入口下载。
-- 正式版安装包已通过 Apple 公证。如果 macOS 提示无法验证或已损坏，先核对是不是从上面的官方入口下载，重新下载再试；不要让我关闭 Gatekeeper 或任何安全设置。
-- 这份提示词与官方文档冲突时，以官方 README 和配置教程（https://sayall.app/tutorial/）为准。
-
-请按这个顺序做。每一步先告诉我目的和怎样算完成，再给操作；我确认后再进入下一步：
-1. 检查 Mac：芯片类型、macOS 版本、蓝牙是否已打开、遥控器是否在身边且电池有电。
-2. 按芯片下载对应的 install.pkg 并运行安装。安装器会先显示隐私政策页，同意后继续；它会装好 /Applications/SayAll.app，并在需要时装好语音用的 SayAll 虚拟麦克风。
-3. 配对遥控器：打开“系统设置 → 蓝牙”，同时长按遥控器的“主页 + 菜单”键进入配对状态，连接名称为 MI RC、Xiaomi Bluetooth Remote 2、Xiaomi Bluetooth Remote 2 Pro 或“小米蓝牙语音遥控器”的设备。配对由我本人操作。
-4. 打开 SayAll.app，按提示允许“蓝牙”权限；如果还要自定义按键，再允许“输入监控”和“辅助功能”，授权后完全退出并重新打开应用。
-5. 配置语音：打开“连接与语音”，点“刷新音频设备”，选择 SayAll（如果列表里是旧名称 MiRemoteV 2ch，选它也可以，两者是同一个设备）；在要说话打字的应用里把麦克风也选成同一个设备。
-6. 验证：点进输入框，按住遥控器语音键说话，松开后看有没有出字。语音键默认长按 Fn/地球键，用豆包输入法保持默认即可。找不到 SayAll 或 MiRemoteV 2ch 时，重新运行安装用的 Installer PKG，再点“刷新音频设备”。
-7. 基础语音通过后，再问我要不要自定义遥控器按键。
-
-必须遵守：
-- 配置只通过 SayAll 的可见界面和系统设置完成；不要读写其他软件的私有文件、数据库或内部数据。
-- 不要读取、记录或发送我的蓝牙地址、语音内容或个人路径。
-- 不要替我做系统权限弹窗、安装器确认和蓝牙配对；这些必须由我本人操作。
-- 不要安装来源不明的软件或脚本。
-- 最后告诉我：SayAll 版本、遥控器型号、语音设备是否就绪、权限是否给齐、实际出字是否成功，以及还有哪些步骤没完成。
-- 做不到的步骤直接说“这一步需要你来做”，给出具体点击位置，不要跳过，也不要假装成功。
+```bash
+git clone https://github.com/itinglight/remote-mic-app.git
 ```
 
-</details>
+```bash
+cd remote-mic-app && git switch feat/public-chromecast-remote
+```
 
-手动安装步骤见下方[下载与安装](#下载与安装)与[首次使用](#首次使用)。
+```bash
+CONFIGURATION=release SAYALL_PRIVATE_PLATFORM_MODE=public REQUIRE_SIRI_REMOTE_SIGNING=0 ./scripts/build-app.sh
+```
 
-## 下载与安装
+构建产物在 `dist/SayAll.app`（ad-hoc 签名，只适合自己使用）。
 
-- 备用下载：[百度网盘](https://pan.baidu.com/s/1yuBRBCDEWnnwfzbxye5rnQ?pwd=9qhx)，提取码：`9qhx`。
+## 与官方版本的区别
 
-- 配置教程：[打开官网配置教程](https://sayall.app/tutorial/)。
+| | 官方无线麦 SayAll | 本社区修改版 |
+| --- | --- | --- |
+| Google 遥控器 | 依赖官方私有组件 | 公开源码实现（`Sources/RemoteMic/ChromecastPublicRemoteDriver.swift`） |
+| 小米、苹果遥控器 | 支持 | 未针对它们测试，请使用官方版本 |
+| 签名与公证 | Developer ID 签名并经 Apple 公证 | 未公证 |
+| 下载 | [sayall.app](https://sayall.app/) | 本仓库 Releases |
 
-- 最新正式版（Apple Silicon）：通过 [Cloudflare CDN 固定入口](https://download.sayall.app/mac) 下载。当前正式版入口仅提供 Apple Silicon 安装包，且不需要随版本更新。
-- 最新预览版（Apple Silicon / Intel）：前往 [GitHub Releases](https://github.com/HD838A/remote-mic-app/releases)，在发布列表中寻找最新标记为 **Pre-release** 的 macOS 候选版本，并按 Mac 芯片下载对应的 Installer PKG。
-
-Release 中的 Apple Silicon 安装包名为 `SayAll-VERSION-BUILD-AppleSilicon-install.pkg`，Intel 安装包名为 `SayAll-VERSION-BUILD-Intel-install.pkg`，两者不能混用。卸载包名分别为 `SayAll-VERSION-BUILD-AppleSilicon-uninstall.pkg` 和 `SayAll-VERSION-BUILD-Intel-uninstall.pkg`。
-
-运行对应的 Installer PKG。安装器会把无线麦 SayAll 安装为 `/Applications/SayAll.app`，并检查现有兼容麦克风（新安装显示为 `SayAll`，旧安装保留 `MiRemoteV 2ch`）：健康且兼容时按原名称保留，缺失或不可用时才安装或更新。安装器在简介之后显示与官网一致的隐私政策；必须完成该页的系统确认才能继续安装。只需要 App、已经使用其他回环音频设备的高级用户，可从同一 Release 下载 App-only ZIP。
-
-自 v1.3.0 起，正式发布包使用 Apple Developer ID 签名并已完成 Apple 公证。请从官网 Cloudflare CDN 固定入口、本项目 GitHub Releases 或上方百度网盘备用入口下载，并按 GitHub 资产摘要或 PKG 签名完成核验。
-
-## 首次使用
-
-开发、检查或移植首次设置流程时，请先阅读 [SayAll Onboarding 跨平台产品规范](feature/first-run-onboarding/PRODUCT_SPEC.md)；具体系统差异见 [macOS](feature/first-run-onboarding/platform-macos.md) 与 [Windows](feature/first-run-onboarding/platform-windows.md) 平台附件。
-
-1. 在“系统设置 → 蓝牙”中打开蓝牙。
-2. 同时长按遥控器的“主页”和“菜单”键，使遥控器进入配对状态。
-3. 在 Mac 上连接名称为 `MI RC`、`Xiaomi Bluetooth Remote 2`、`Xiaomi Bluetooth Remote 2 Pro` 或“小米蓝牙语音遥控器”的设备。
-4. 启动 SayAll.app，按提示允许蓝牙权限。
-5. 如果需要自定义普通按键，再允许“输入监控”和“辅助功能”。授权后请完全退出并重新打开应用。
-
-“连接与语音”和“按键映射”的设备卡片优先显示系统蓝牙设置中的自定义名称；同名设备从 1 开始编号，未改名设备保留原有型号编号。修改名称后，返回无线麦 SayAll 或重新打开相关页面即可刷新；离线设备保留上次读到的名称。当前系统名称同步覆盖小米遥控器和苹果遥控器，A2854 的独立系统 API 读取已验证，候选 App 的完整兼容性仍待验收。
-
-未连接任何设备时，菜单栏图标呈灰化外观，仍可点击。实体遥控器、iPhone、Apple Watch 或网页版任一有效连接后恢复正常显示；传输语音时显示活动图标。悬停可查看当前状态，已连接不代表音频或输入权限已就绪。
-
-应用启动后会显示 Dock 图标并常驻菜单栏：
-
-- 单击 Dock 图标：打开设置面板；
-- 鼠标左键或右键单击菜单栏图标：显示同一个状态菜单；
-- 打开菜单即可在连接状态下方查看已连接遥控器的电量。多台同时连接时按设备分行显示；
-- 菜单第一项“打开主界面…”用于打开或激活主窗口，下方保留连接状态、重新连接、日志、关于、版本号、检查更新、GitHub 和退出操作。
-
-应用普通启动时默认打开主面板。设置面板左侧栏底部的“关于”页面提供版本、检查更新、版本历史、术语表、GitHub、语言、Dock 显示和启动行为选项。关闭“启动时自动打开主面板”后，普通启动仅保留菜单栏入口；更新完成并重启时仍会无条件显示主面板。关闭“在 Dock 中显示应用图标”后，应用仍会保留菜单栏入口，可随时重新打开设置。
-
-“应用语言”会完整展示“跟随系统”“简体中文”和“English”三个选项。设置窗口、状态、菜单和内置帮助会随选择刷新；系统权限提示和第三方界面仍会在下次打开时按 macOS 自身的语言显示。
-
-应用每天自动检查一次更新，发现新版本后由用户确认是否安装；不会静默下载或自动安装。“关于”页面和右键菜单中的“检查更新…”均可随时手动检查。“关于”页的“检查预发布版本”默认关闭；开启后，自动检查和手动检查都会包含 GitHub 上最新的 pre-release 候选版本。Sparkle 仅更新应用本体，兼容麦克风驱动仍由独立 Installer PKG 管理。旧版如果仍安装在 `Remote Mic.app` 或 `无线麦.app` 路径，应用内更新会沿用原路径；要迁移到标准 `SayAll.app` 文件名，请运行一次新版 Installer PKG。
-
-## 使用语音输入
-
-1. 打开“连接与语音”页面。
-2. 点击“刷新音频设备”。
-3. 选择 `SayAll`（旧安装保留 `MiRemoteV 2ch`，两者是同一个设备），或选择你已经安装的其他回环音频设备。
-4. 在需要听写或语音输入的应用中选择同一个设备作为麦克风。
-5. 单击目标输入框，按住遥控器语音键说话，松开后结束。
-
-在“按键映射”页的“语音键”区域可以选择语音触发方式：默认的 Fn/地球键、左 Command 长按、右 Command 长按、左 Option 长按或右 Option 长按。Fn/地球键保持旧版本行为；修饰键模式需要无线麦 SayAll 的“辅助功能”权限，并会在语音开始时按下所选按键、结束时释放。目标语音应用必须支持对应的单独按键长按；许多应用会把左右同侧按键合并为通用修饰键，需在目标应用中实际测试。长按期间同时按其他键可能触发修饰键快捷键。
-
-默认使用 Fn，是为了直接兼容豆包、微信等 Fn 长按语音入口和 Typeless 的 Fn 点按入口，同时让遥控器“按住采音、松开停止”的生命周期与快捷键一致。技术上可以继续扩展 F18、F19、F20 等低频键，但当前版本不支持任意自定义语音键：目标语音应用也必须配置同一个键，而且 RC001/RC003、iPhone、Apple Watch、网页版、权限与输入源切换都要共享同一套成对按下/释放逻辑。普通遥控器按键仍可单独配置 F1–F20。
-
-语音键不承担短按、双击或长按附加动作，只负责按下即开始、释放即结束的实时语音会话。需要聚焦前台 App 输入框时，请在普通按键的“输入框”中选择“聚焦输入框”；该动作使用 macOS Accessibility，不读取输入内容。
-
-如果想先确认音频链路是否正常，可以点击“发送 1 秒测试音”，或在 QuickTime Player 的“新建音频录制”中观察输入电平。
-
-### Typeless 兼容
-
-Typeless 等点按 Fn 开始、再次点按结束的语音工具，与小米蓝牙遥控器 2 和 2 Pro 默认的 Fn 长按行为不兼容。在“按键映射”的语音键区域开启“语音键模拟 Fn 点按”后，无线麦 SayAll 会在语音流开始和排空结束时各发送一次 Fn 点按。Typeless 和无线麦 SayAll 仍需选择同一个回环设备，并需授予无线麦 SayAll“辅助功能”权限。
-
-该模式仍然要求**按住小米蓝牙遥控器 2 或 2 Pro 语音键说话、松开结束**；这两款遥控器的固件在松开语音键后都不会继续发送麦克风音频，因此这不是持续录音或免按键模式。开关默认关闭；豆包输入法等使用 Fn 长按的工具应保持关闭。权限或遥控器 HID 映射不完整时，模式会自动关闭并恢复默认 Fn 长按映射。
-
-豆包输入法找不到普通虚拟麦克风时，请运行对应架构的 Installer PKG，然后在 SayAll.app 中选择 `SayAll`（旧安装保留 `MiRemoteV 2ch`）。详细步骤见[豆包输入法兼容说明](Resources/豆包输入法兼容说明.md)。
-
-![豆包输入法 Mac 版选择 MiRemoteV 2ch 麦克风](Screenshots/doubao-input-method-macos.png)
-
-### 遥控器与语音工具的搭配
-
-不同遥控器的收音方式不同：小米遥控器只能按住收音；Chromecast 语音遥控器既支持按住，也支持「按一下开始、再按一下结束」；Siri Remote 另有触摸面。Mac 端的语音工具同样分两类：有的按住说话，有的按一次切换。**两边不是同一类时会出现「按一下结束没生效、要再按一下」或「按下没说几句就结束」。**
-
-各款遥控器、各款输入工具的能力，以及每种组合该用哪种模式（包括「语音键模拟 Fn 点按」要不要开），见[遥控器与输入工具能力矩阵](remote/遥控器与输入工具能力矩阵.md)。
-
-## 自定义遥控器按键
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="Screenshots/key-mapping-dark-zh.png">
-  <img alt="按键映射设置页" src="Screenshots/key-mapping-zh.png">
-</picture>
-
-打开“按键映射”页面并启用自定义映射后，可以修改方向、确定、返回、主页、菜单、TV、电源和音量键的功能。
-
-每个普通按键都可以设置单击动作，并可额外设置双击和长按动作。动作支持键盘操作、系统音量、播放控制、打开当前 Mac 已安装的常用应用、聚焦前台输入框，以及任意自定义键盘快捷键。自定义快捷键既可以直接选择复制、粘贴、聚焦搜索等常用组合，也可以在页面内的标准键盘选择组合键、主键、F1–F20、导航键、数字键盘或单独的左右修饰键；仍保留真实键盘录入入口。
-
-“打开自定义 APP”可以从本机选择任意 `.app`，并选择只打开应用、激活后发送该应用的聚焦快捷键，或记录一次目标输入框后自动聚焦。目标应用升级后如果输入框结构变化，请重新记录；无线麦 SayAll 不会使用固定屏幕坐标，也不会记录输入框中的文字。
-
-- 没有设置双击或长按时，单击保持原有的即时响应和按住重复；
-- 设置双击后，应用会等待约 0.3 秒区分单击和双击；
-- 设置长按后，按住约 0.55 秒执行长按动作，并抑制单击；
-- 设置了双击或长按的实体键不会再按住重复，避免多个动作同时触发。
-
-语音键始终用于语音输入，不参与普通按键映射；触发方式可在语音键区域选择 Fn/地球键、左 Command、右 Command、左 Option 或右 Option 长按。
-
-## 使用统计
-
-“统计”页面可以按日、周或全部范围查看遥控器按键次数、语音时长，以及从当前版本开始记录的最长单次语音排行。所有统计数据仅保存在本机，不会上传。
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="Screenshots/statistics-dark-zh.png">
-  <img alt="无线麦 SayAll 使用统计页" src="Screenshots/statistics-zh.png">
-</picture>
-
-## AI / Agent 本地配置
-
-无线麦 SayAll 可以在用户明确授权后，通过随 App 安装的 Swift MCP Helper，让 Codex、Claude Code、Cursor、OpenCode 等客户端只读访问本机“回眸”历史。用户无需安装 Node.js 或其他开发依赖。
-
-需要由 AI 协助完成安装、授权、客户端连接和验证时，请让 AI 阅读：[AI 安装与 MCP 配置指南](AI_SETUP.md)。
-
-## 权限与隐私
-
-- 蓝牙：连接遥控器并接收语音；
-- 输入监控：识别遥控器普通按键；
-- 辅助功能：把按键动作发送给当前应用。
-
-无线麦 SayAll 不会上传或保存语音，不会自动修改系统默认输入、输出设备，也不会在日志中记录语音内容、蓝牙地址或外设标识。
-
-## 卸载
-
-1. 退出无线麦 SayAll。
-2. 从同一 GitHub Release 下载并运行文件名包含当前 `VERSION-BUILD` 的对应架构卸载包。
-
-卸载器会核对 Bundle ID，然后把已识别的 `SayAll.app`、历史 `Remote Mic.app` / `无线麦.app` 和 `MiRemoteV 2ch` 移到 macOS 废纸篓，需要时可恢复。它不会修改 BlackHole 或无线麦 SayAll 的本地设置；同名但无法确认归属的内容会保留在原位。
-
-## 遇到问题
-
-请先查看[排障指南](TROUBLESHOOTING.md)。首次安装的完整步骤见[首次安装说明](Resources/首次安装说明.md)。
-
-所有人开发新功能前，包括仓库作者、维护者、外部贡献者和自动化 Agent，都必须阅读并遵守[新功能开发规范](FEATURE_DEVELOPMENT.md)。
-
-开发、构建、协议、测试和发布信息见[技术文档](TECHNICAL.md)；分支与 PR 管理见[分支与提交管理策略](BRANCH_MANAGEMENT.md)；新增或重命名仓库文件前请阅读[文件命名规范](FILE_NAMING.md)。
-
-后续开发计划见 [TODO](TODO.md)。
-
-## ⭐ Star History
-
-<p align="center">
-  <a href="https://github.com/HD838A/remote-mic-app/stargazers">
-    <img src="https://raw.githubusercontent.com/HD838A/remote-mic-app/star-history/assets/star-history.svg" alt="Star History Chart" width="100%">
-  </a>
-</p>
-
-## ☕️ 请我买 Token
-
-如果「无线麦 SayAll」对你有帮助，欢迎自愿请我买一点 Token。
-
-这些支持会用于支付 AI 开发工具的 Token 费用，帮助我继续为大家开发新功能、优化已有功能、修复问题，让这个项目能够持续迭代。
-
-赞赏完全自愿，不影响软件使用，也不构成任何服务承诺。金额随意，量力而行；无论是否赞赏，都感谢你的使用、反馈和分享。
-
-谢谢你支持「无线麦 SayAll」继续变得更好。
-
-<table>
-  <tr>
-    <td align="center">
-      <img src="Screenshots/donation-wechat.jpg" alt="微信赞赏码" width="280">
-      <br>
-      微信
-    </td>
-  </tr>
-</table>
-
-## 特别致谢
-
-无线麦 SayAll App 由 DimAgent 与 Vokie 友情赞助，感谢两位朋友，让好工具被更多人用上。
-
-- **DimAgent**：调度多模型团队，构建你想要的一切 → [dimagent.cn](https://dimagent.cn/?utm_source=sayall.app)
-- **Vokie**：首选语音助理，语音输入、闪记、旁听，直接给你可用结果 → [vokie.com](https://vokie.com/?utm_source=sayall.app)
+如果你用的是小米蓝牙遥控器或苹果遥控器，请直接使用 [官方版本](https://sayall.app/)。
 
 ## 许可与来源
 
-本仓库中的 macOS App、驱动及相关软件代码采用 `GPL-3.0-only` 许可。iOS App 已由独立私有仓库维护，并继续通过上方 App Store 入口分发。macOS App 的 Logo 和 App Icon 是需要单独授权的专有品牌资产，详情见 [LOGO-LICENSE.md](LOGO-LICENSE.md)。完整版权和第三方信息见 [COPYRIGHT.md](COPYRIGHT.md) 与 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
-
-项目最初 fork 自 [nijez/open-voice-bridge](https://github.com/nijez/open-voice-bridge)，现由本仓库独立维护。
-
-`MiRemoteV 2ch` 的设备命名及让豆包枚举设备的 USB transport 兼容方案参考自 [VincentKingHsu/MiRemoteVoice](https://github.com/VincentKingHsu/MiRemoteVoice) `v1.0.0-beta.1`（MIT）；该项目的兼容驱动同样基于 BlackHole。本项目不复用 MiRemoteVoice 的二进制替换脚本，而是从 [ExistentialAudio/BlackHole](https://github.com/ExistentialAudio/BlackHole) `v0.7.1`（固定提交 `e2b22aaaba4e507a097131704bf96dabc004d9cf`）源码独立派生构建 `MiRemoteV2ch.driver`，适用 `GPL-3.0`。它使用独立标识，可与已安装的 BlackHole 并存，不覆盖或删除其文件。
-
-## 官网
-
-- 中文官网：[sayall.app](https://sayall.app/)
-- English website：[sayall.app/en](https://sayall.app/en/)
-
-## 其他作品
-
-- [Vibe PPT Web Template](https://github.com/GetSayAll/vibe-ppt-web-template)
-- [Claude Code Config](https://github.com/HD838A/claude-code-config)
-- [DJI 4G Mac](https://github.com/HD838A/dji-4g-mac)
+- 软件代码采用 `GPL-3.0-only` 许可，见 [LICENSE.md](LICENSE.md)。本仓库是对 [HD838A/remote-mic-app](https://github.com/HD838A/remote-mic-app) 的修改版本，修改内容见本仓库的提交记录。
+- 官方 App Logo 和 App Icon 不属于 GPL 授权范围，Fork 不得将其用作自己的品牌标识，见 [LOGO-LICENSE.md](LOGO-LICENSE.md)。
+- Google 遥控器协议参考了开源项目 vibe-mote（MIT）的公开记录，并以 macOS 真机实测为准。
+- 完整版权与第三方信息见 [COPYRIGHT.md](COPYRIGHT.md) 与 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
 
 ## 开发者文档
 
-开发者、贡献者和自动化 Agent 请从 [项目文档导航](DOCUMENTATION.md) 开始。
+开发者和贡献者请从 [项目文档导航](DOCUMENTATION.md) 开始。
